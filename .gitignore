@@ -1,2 +1,5 @@
 #ignore files/folders for git
 node_modules
+
+#cached save files
+*.save
