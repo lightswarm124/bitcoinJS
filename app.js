@@ -10,20 +10,59 @@ app.use(bodyparser.urlencoded({
 }));
 app.use(bodyparser.json());
 
-app.get("/", function(req, res){
-	res.sendFile(__dirname + "/index.html");
-});
+app.set('view engine', 'ejs');
 
-app.post("/wallet", function(req, res){
-	let brainsrc = req.body.brainsrc;
-	console.log(brainsrc);
-	let input = new Buffer(brainsrc);
+function brainWallet(uinput, callback){
+	let input = new Buffer(uinput);
 	let hash = bitcoinjs.crypto.sha256(input);
 	let d = bigi.fromBuffer(hash);
 	let pk = new bitcoinjs.ECPair(d);
 	let wif = pk.toWIF();
 	let address = pk.getAddress();
-	res.send("The Brain wallet of: " + brainsrc + "<br>Address: " + address + "<br>Private Key: " + wif);
+	callback(wif, address);
+};
+
+function getPrice(returnPrice){
+	request({
+		url: "https://wex.nz/api/3/ticker/btc_usd",
+		json: true
+	}, function(err, res, body){
+		returnPrice(body.btc_usd.last);
+	});
+};
+
+
+
+app.get("/", function(req, res){
+	getPrice(function(lastPrice){
+		res.render("index", {
+			lastPrice: lastPrice
+		});
+	});
+});
+
+app.get("/brain", function(req, res){
+	getPrice(function(lastPrice){
+		res.render("brain", {
+			lastPrice: lastPrice
+		});
+	});
+});
+
+app.get("/converter", function(req, res){
+	getPrice(function(lastPrice){
+		res.render("converter", {
+			lastPrice: lastPrice
+		});
+	});
+});
+
+app.post("/wallet", function(req, res){
+	let brainsrc = req.body.brainsrc;
+	console.log(brainsrc);
+	brainWallet(brainsrc, function(privKey, addr){
+		res.send("The Brain wallet of: " + brainsrc + "<br>Address: " + addr + "<br>Private Key: " + privKey);	
+	});
 });
 
 

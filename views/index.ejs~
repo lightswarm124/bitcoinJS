@@ -1,0 +1,4 @@
+<html>
+<% include header %>
+Hello welcome to my website
+</html>
