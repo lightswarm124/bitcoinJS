@@ -1,6 +1,5 @@
 #ignore files/folders for git
 node_modules
-tutCode
 
 #cached save files
 *.save
