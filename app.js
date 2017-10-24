@@ -60,7 +60,7 @@ app.post("/wallet", function(req, res){
 	let brainsrc = req.body.brainsrc;
 	console.log(brainsrc);
 	brainWallet(brainsrc, function(privKey, addr){
-		res.send("The Brain wallet of: " + brainsrc + "<br>Address: " + addr + "<br>Private Key: " + privKey);	
+		res.send("The Brain wallet of: " + brainsrc + "<br>Address: " + addr + "<br>Private Key: " + privKey);
 	});
 });
 
